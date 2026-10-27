@@ -1,0 +1,5 @@
+                       RMSE (€)     MAE (€)     R2  Erreur relative médiane (%)
+Référence (médiane)  355038.624  192947.424 -0.074                       40.310
+Régression linéaire  257692.550  122715.943  0.434                       23.796
+Random Forest        132693.668   67032.292  0.850                       12.106
+Gradient Boosting    131748.154   68647.890  0.852                       13.086

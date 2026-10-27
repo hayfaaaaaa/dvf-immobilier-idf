@@ -1,0 +1,31 @@
+{
+  "meilleur_modele": "Gradient Boosting",
+  "resultats": {
+    "Référence (médiane)": {
+      "RMSE (€)": 355038.62437693053,
+      "MAE (€)": 192947.4238557076,
+      "R2": -0.07438983788499232,
+      "Erreur relative médiane (%)": 40.30991213883283
+    },
+    "Régression linéaire": {
+      "RMSE (€)": 257692.54963322484,
+      "MAE (€)": 122715.94341897454,
+      "R2": 0.43400263088704993,
+      "Erreur relative médiane (%)": 23.796154360179518
+    },
+    "Random Forest": {
+      "RMSE (€)": 132693.66815578495,
+      "MAE (€)": 67032.2923089449,
+      "R2": 0.8499240548518878,
+      "Erreur relative médiane (%)": 12.106203674056687
+    },
+    "Gradient Boosting": {
+      "RMSE (€)": 131748.15425338803,
+      "MAE (€)": 68647.89041910025,
+      "R2": 0.8520551789887707,
+      "Erreur relative médiane (%)": 13.085715716660998
+    }
+  },
+  "n_train": 411862,
+  "n_test": 102966
+}

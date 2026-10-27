@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ImmoIDF Intelligence Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--ind:#5b5bd6;--bg:#f3f5fb;--tx:#1e2347;--mu:#7a819b}
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden}
+body{background:#dfe4f1;padding:.5vw;font:500 clamp(10px,.82vw,15px)/1.35 Inter,"Segoe UI",system-ui,sans-serif;color:var(--tx)}
+.app{height:100%;background:var(--bg);border-radius:18px;overflow:hidden;display:grid;grid-template-columns:clamp(150px,12vw,225px) 1fr;grid-template-rows:auto 1fr;gap:.7vw 1vw}
+aside{grid-row:1/3;background:linear-gradient(180deg,#15235f,#0c1440);color:#cfd5f0;padding:1vw .9vw;display:flex;flex-direction:column;gap:.45vw;min-height:0}
+.brand{display:flex;align-items:center;gap:.6em;color:#fff;font-size:1.25em;font-weight:600;margin-bottom:.4vw}
+.logo{width:2.3em;height:2.3em;border-radius:50%;border:1.5px solid #c9a24d;display:grid;place-items:center}.logo svg{width:55%}
+.lb{font-size:.72em;letter-spacing:.08em;color:#8d97c9;margin-top:.3em}
+.nb{display:flex;align-items:center;gap:.6em;border:0;border-radius:9px;padding:.65em .8em;background:transparent;color:#cfd5f0;font:inherit;cursor:pointer;text-align:left}
+.nb svg{width:1.2em;height:1.2em;flex:none}.nb.on{background:linear-gradient(90deg,#5b5bd6,#6c6cea);color:#fff}
+aside label{font-size:.78em;color:#aab3dd;display:block;margin-bottom:.15em}
+aside select{width:100%;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:.4em;background:rgba(255,255,255,.07);color:#fff;font:inherit}aside select option{color:#1e2347}
+.chips{display:flex;flex-wrap:wrap;gap:.3em}.chip{padding:.22em .65em;border-radius:12px;background:rgba(255,255,255,.1);cursor:pointer;color:#dfe3f8}.chip.on{background:var(--ind);color:#fff}
+#rs{margin-top:auto;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:.7em;font:inherit;cursor:pointer}
+header{grid-column:2;display:flex;align-items:center;gap:1vw;padding:.8vw 1vw 0 0}
+h1{font:600 clamp(16px,1.6vw,28px) Inter,"Segoe UI",sans-serif;margin:0;line-height:1.15}.sub{color:var(--mu);font-size:.9em}
+.hr{margin-left:auto;display:flex;align-items:center;gap:.8em;text-align:right;font-size:.88em;color:var(--mu)}.av{width:2.6em;height:2.6em;border-radius:50%;background:var(--ind);color:#fff;display:grid;place-items:center;font-weight:600}
+main{grid-column:2;grid-row:2;min-height:0;min-width:0;padding:0 1vw .8vw 0}.page{display:none;height:100%;gap:.7vw}.page.on{display:grid}
+#p1{grid-template-rows:41fr 59fr}#p2{grid-template-columns:1.5fr 1fr;grid-template-rows:1fr 1fr}#p3{grid-template-columns:1.15fr 1fr}
+.r1{display:grid;grid-template-columns:1.05fr 1fr;gap:.7vw;min-height:0}.r2{display:grid;grid-template-columns:1.05fr 1.1fr 1.2fr 1fr;gap:.7vw;min-height:0}
+.pn{background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(25,35,90,.07);padding:.75vw .95vw;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.pn h2{font-size:1.05em;font-weight:600;margin:0}.pn .d{font-size:.8em;color:var(--mu);margin-bottom:.3em}.cv{flex:1;min-height:0;position:relative}
+.bei{background:none;box-shadow:none;padding:0;display:grid;grid-template-columns:1.3fr 1fr;gap:.7vw;overflow:visible}
+.kg{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:.7vw;min-height:0}
+.kc{background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(25,35,90,.07);padding:.6vw .8vw;display:flex;justify-content:space-between;gap:.4vw;min-width:0;min-height:0}
+.kc>div:first-child{min-width:0;display:flex;flex-direction:column;justify-content:center}
+.kc .t{display:flex;align-items:center;gap:.5em;color:var(--mu);font-size:.9em}.ic{width:2.1em;height:2.1em;border-radius:9px;display:grid;place-items:center;flex:none}.ic svg{width:58%;height:58%}
+.kc .v{font-size:1.8em;font-weight:600;line-height:1.15;margin-top:.15em}.kc .s{font-size:.78em;color:var(--mu)}.kc .sp{width:42%;height:60%;align-self:flex-end;position:relative}
+.hero{border-radius:14px;overflow:hidden;position:relative;background:#e4e7f5;min-height:0}.hero img,.hero svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tg{display:flex;gap:.4vw;justify-content:flex-end;margin-bottom:.4em}.tg button{border:0;border-radius:14px;background:#eef0fa;padding:.35em 1.3em;font:inherit;cursor:pointer;color:var(--tx)}.tg button.on{background:var(--ind);color:#fff}
+table{width:100%;border-collapse:collapse}th{font-weight:500;color:var(--mu);text-align:right;padding:.2em .35em}th:first-child,td:first-child{text-align:left}td{padding:.28em .35em;text-align:right}tr.tot td{font-weight:700}td.tt{font-weight:700}
+.dn{display:flex;align-items:center;gap:.8vw;flex:1;min-height:0}.dc{position:relative;height:100%;aspect-ratio:1/1;max-width:58%;flex:none}
+.ct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}.ct b{font-size:1.5em;font-weight:600;line-height:1}.ct span{font-size:.75em;color:var(--mu)}
+.lg{flex:1;min-width:0;display:flex;flex-direction:column;gap:.5em;font-size:.85em}.lg div{display:flex;justify-content:space-between;gap:.5em}.lg i{display:inline-block;width:.75em;height:.75em;border-radius:50%;margin-right:.5em}
+.tl{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:.5vw;flex:1;min-height:0}.tl div{border-radius:11px;padding:.35em .65em;background:#eef0fd;display:flex;flex-direction:column;justify-content:center}
+.tl div:nth-child(2){background:#fff4e0}.tl div:nth-child(3){background:#e8f6ee}.tl div:nth-child(4){background:#e8f0fe}.tl div:nth-child(5){background:#f3eefe}.tl div:nth-child(6){background:#fde9ec}
+.tl small{font-size:.72em;text-transform:uppercase;color:var(--mu)}.tl b{font-size:1.5em;font-weight:600;line-height:1.1}.tl span{font-size:.75em;color:var(--mu)}
+.sm{font-size:.85em;border-top:1px solid #eceff7;margin-top:.3em;padding-top:.3em}#map{flex:1;min-height:0;border-radius:12px}
+.tag{padding:.12em .7em;border-radius:12px;background:#e3f6ea;color:#1f8a4c;font-size:.9em}.tag.m{background:#fff1d6;color:#a86a00}.up{color:#2e9d5b}.dw{color:#d64545}
+</style></head><body><div class="app">
+<aside><div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="#c9a24d"><path d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg></div>ImmoIDF</div>
+<div class="lb">TABLEAUX DE BORD</div>
+<button class="nb on" data-p="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Marché</button>
+<button class="nb" data-p="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Prix et évolution</button>
+<button class="nb" data-p="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Carte et ventes</button>
+<div class="lb" style="margin-top:.8vw">FILTRES</div>
+<div><label>Années</label><div class="chips" id="chips"></div></div>
+<div><label>Type de bien</label><select id="ft"></select></div><div><label>Département</label><select id="fd"></select></div>
+<div><label>Commune</label><select id="fc"></select></div>
+<div><label>Pièces</label><select id="fp"><option value="">Toutes</option><option>1</option><option>2</option><option>3</option><option>4</option><option value="5">5 et +</option></select></div>
+<button id="rs">Réinitialiser</button></aside>
+<header><div><h1>ImmoIDF Intelligence Dashboard</h1><div class="sub">Plateforme d’analyse du marché immobilier en Île-de-France</div></div>
+<div class="hr"><div>Dernière vente enregistrée : <span id="last"></span><br>Réalisé par Hayfa Lamouchi</div><div class="av">HL</div></div></header>
+<main>
+<section class="page on" id="p1"><div class="r1">
+<div class="pn bei"><div class="kg">
+<div class="kc"><div><div class="t"><span class="ic" style="background:#5b5bd6"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></span>Ventes</div><div class="v" id="k1"></div><div class="s" id="s1"></div></div><div class="sp"><canvas id="sp1"></canvas></div></div>
+<div class="kc"><div><div class="t"><span class="ic" style="background:#f5a524"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1"/></svg></span>Prix m² médian</div><div class="v" id="k2"></div><div class="s" id="s2"></div></div><div class="sp"><canvas id="sp2"></canvas></div></div>
+<div class="kc"><div><div class="t"><span class="ic" style="background:#3fae63"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5a3.5 3.5 0 1 0 0 5M8 11h5M8 13h5"/></svg></span>Prix médian</div><div class="v" id="k3"></div><div class="s" id="s3"></div></div><div class="sp"><canvas id="sp3"></canvas></div></div>
+<div class="kc"><div><div class="t"><span class="ic" style="background:#2f6fed"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></span>Surface médiane</div><div class="v" id="k4"></div><div class="s" id="s4"></div></div><div class="sp"><canvas id="sp4"></canvas></div></div></div>
+<div class="hero"><img src="hero.jpg" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'">
+<svg viewBox="0 0 300 260" preserveAspectRatio="xMidYMid slice"><rect width="300" height="260" fill="#efe3cf"/><circle cx="250" cy="45" r="22" fill="#f7d9a8"/><rect x="0" y="215" width="300" height="45" fill="#c9d3b4"/>
+<rect x="60" y="95" width="190" height="125" fill="#e0cdb2"/><rect x="85" y="55" width="140" height="45" fill="#f4eee4"/><rect x="50" y="90" width="210" height="8" fill="#8c6f58"/><rect x="75" y="50" width="160" height="7" fill="#8c6f58"/>
+<g fill="#5b6770"><rect x="95" y="64" width="26" height="28"/><rect x="137" y="64" width="26" height="28"/><rect x="179" y="64" width="26" height="28"/><rect x="78" y="112" width="30" height="40"/><rect x="135" y="112" width="30" height="40"/><rect x="192" y="112" width="30" height="40"/><rect x="78" y="168" width="30" height="42"/><rect x="192" y="168" width="30" height="42"/></g>
+<rect x="132" y="165" width="36" height="55" fill="#b9895f"/><circle cx="35" cy="190" r="26" fill="#8fae7a"/><rect x="32" y="200" width="6" height="22" fill="#6b4f3a"/><circle cx="272" cy="195" r="20" fill="#9bb986"/></svg></div></div>
+<div class="pn"><div class="tg"><button id="m1" class="on">Prix m²</button><button id="m2">Ventes</button></div><h2 id="mt"></h2><div class="d">Département par année : plus la case est foncée, plus la valeur est élevée</div><div style="flex:1;min-height:0;overflow:hidden"><table id="mx"></table></div></div></div>
+<div class="r2">
+<div class="pn"><h2>Ventes par département et type</h2><div class="d">Appartements et maisons</div><div class="cv"><canvas id="c1"></canvas></div></div>
+<div class="pn"><h2>Ventes par année et type</h2><div class="cv"><canvas id="c2"></canvas></div><div class="sm" id="trend"></div></div>
+<div class="pn"><h2>Répartition par pièces</h2><div class="dn"><div class="dc"><canvas id="c3"></canvas><div class="ct"><b id="dct"></b><span>ventes</span></div></div><div class="lg" id="lgp"></div></div></div>
+<div class="pn"><h2>Composition de la sélection</h2><div class="tl" id="tl"></div></div></div></section>
+<section class="page" id="p2"><div class="pn" style="grid-row:span 2"><h2>Prix m² médian par mois, année par année</h2><div class="d">Une courbe par année : compare le même mois d’une année à l’autre</div><div class="cv"><canvas id="c4"></canvas></div></div>
+<div class="pn"><h2>Prix m² médian par année</h2><div class="cv"><canvas id="c5"></canvas></div><div class="sm" id="yl"></div></div>
+<div class="pn"><h2>10 communes les plus chères</h2><div class="d">Au moins 30 ventes</div><div class="cv"><canvas id="c6"></canvas></div></div></section>
+<section class="page" id="p3"><div class="pn"><h2>Carte des communes</h2><div class="d">Taille = nombre de ventes, couleur = prix au m² (clair bas, foncé haut). Clic = filtre.</div><div id="map"></div></div>
+<div class="pn"><h2>Dernières ventes</h2><table id="tb"></table></div></section>
+</main></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),fmt=(n,d=0)=>n==null?"–":n.toLocaleString("fr-FR",{maximumFractionDigits:d}),esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const MOIS=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"],PAL=["#5b5bd6","#f5a524","#2fae9c","#8b5cf6","#ef6c8a","#94a3b8"],TY={Appartement:"#5b5bd6",Maison:"#f5a524"};
+const F={years:new Set(),type:"",dept:"",commune:"",pieces:""};let meta,S,MT="p",CH={},map,layer;
+Chart.defaults.font.size=Math.max(10,Math.min(13,innerWidth/140));Chart.defaults.color="#6b6b6b";Chart.defaults.borderColor="#eef0f6";
+const mk=(id,cfg)=>{CH[id]&&CH[id].destroy();CH[id]=new Chart(document.getElementById(id),cfg)};
+const opt=(x={})=>Object.assign({maintainAspectRatio:false,plugins:{legend:{display:false}}},x);
+const sc=c=>{const t=Math.max(0,Math.min(1,c));return`rgb(${Math.round(214-135*t)},${Math.round(214-144*t)},${Math.round(248-19*t)})`};
+const fill=(id,first,vals,fn)=>{$(id).innerHTML=`<option value="">${first}</option>`+vals.map(fn||(v=>`<option>${v}</option>`)).join("")};
+function chips(){$("#chips").innerHTML=meta.years.map(y=>`<span class="chip ${F.years.has(y)?"on":""}" data-y="${y}">${y}</span>`).join("");
+ document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const y=+c.dataset.y;if(F.years.size===meta.years.length)F.years=new Set([y]);else{F.years.has(y)?F.years.delete(y):F.years.add(y);if(!F.years.size)F.years=new Set(meta.years)}chips();refresh()})}
+function communes(){fill("#fc","Toutes",meta.communes.filter(c=>!F.dept||c.dept===F.dept),c=>`<option value="${c.code}">${esc(c.nom)}</option>`);$("#fc").value=F.commune}
+function show(n){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("on",p.id==="p"+n));document.querySelectorAll(".nb").forEach(b=>b.classList.toggle("on",b.dataset.p==n));
+ setTimeout(()=>{map.invalidateSize();Object.values(CH).forEach(c=>c.resize())},60)}
+async function init(){meta=await (await fetch("/api/filters")).json();F.years=new Set(meta.years);$("#last").textContent=meta.last;
+ fill("#ft","Tous",meta.types);fill("#fd","Tous",meta.depts);communes();chips();
+ $("#ft").onchange=e=>{F.type=e.target.value;refresh()};$("#fd").onchange=e=>{F.dept=e.target.value;F.commune="";communes();refresh()};
+ $("#fc").onchange=e=>{F.commune=e.target.value;refresh()};$("#fp").onchange=e=>{F.pieces=e.target.value;refresh()};
+ $("#rs").onclick=()=>{Object.assign(F,{years:new Set(meta.years),type:"",dept:"",commune:"",pieces:""});["#ft","#fd","#fp"].forEach(s=>$(s).value="");communes();chips();refresh()};
+ document.querySelectorAll(".nb").forEach(b=>b.onclick=()=>show(b.dataset.p));
+ $("#m1").onclick=()=>{MT="p";matrix()};$("#m2").onclick=()=>{MT="n";matrix()};
+ map=L.map("map").setView([48.75,2.4],9);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map);
+ addEventListener("resize",()=>map.invalidateSize());refresh()}
+async function refresh(){const p=new URLSearchParams();if(F.years.size<meta.years.length)p.set("years",[...F.years].join(","));
+ for(const k of["type","dept","commune","pieces"])if(F[k])p.set(k,F[k]);S=await (await fetch("/api/stats?"+p)).json();if(S.error){$("#trend").textContent="Erreur : "+S.error;return}render()}
+function matrix(){const m=S.matrix;$("#m1").classList.toggle("on",MT==="p");$("#m2").classList.toggle("on",MT==="n");
+ $("#mt").textContent=MT==="p"?"Prix m² médian (€) par département et par année":"Nombre de ventes par département et par année";
+ const v=r=>MT==="p"?r.p:r.n,all=m.rows.flatMap(r=>v(r)).filter(x=>x),lo=Math.min(...all),hi=Math.max(...all);
+ const cell=x=>`<td style="background:rgba(91,91,214,${x?(.1+.7*(x-lo)/((hi-lo)||1)).toFixed(2):0})">${x?fmt(x):"–"}</td>`;
+ $("#mx").innerHTML="<tr><th>Département</th>"+m.years.map(y=>`<th>${y}</th>`).join("")+"<th>Total</th></tr>"
+  +m.rows.map(r=>`<tr><td>${r.dept}</td>${v(r)&&r[MT].map(cell).join("")}<td class="tt">${fmt(MT==="p"?r.tp:r.tn)}</td></tr>`).join("")
+  +`<tr class="tot"><td>Total</td>${m.ty.map(y=>`<td>${fmt(MT==="p"?y.p:y.n)}</td>`).join("")}<td>${fmt(MT==="p"?S.kpi.prix_m2:S.kpi.n)}</td></tr>`}
+function render(){const k=S.kpi,sp=S.spark,n=S.share,t=(n.Appartement||0)+(n.Maison||0)||1;
+ $("#k1").textContent=fmt(k.n);$("#s1").textContent=`Sur ${S.bytype.depts.length} départements · ${fmt((n.Appartement||0)/t*100)} % d’appartements`;
+ $("#k2").textContent=fmt(k.prix_m2)+" €";$("#s2").textContent=k.evo==null?"Médiane de la sélection":`${k.evo>0?"+":""}${fmt(k.evo,1)} % vs ${k.annee-1}`;
+ $("#s2").className="s "+(k.evo>0?"up":k.evo<0?"dw":"");$("#k3").textContent=fmt(k.prix)+" €";$("#s3").textContent="Pour "+fmt(k.surface)+" m² (médiane)";
+ $("#k4").textContent=fmt(k.surface)+" m²";$("#s4").textContent=`${fmt((n.Maison||0)/t*100)} % de maisons`;
+ [["sp1","n","#5b5bd6"],["sp2","p","#f5a524"],["sp3","v","#3fae63"],["sp4","s","#2f6fed"]].forEach(([id,key,cc])=>mk(id,{type:"line",data:{labels:sp[key].map((_,i)=>i),datasets:[{data:sp[key],borderColor:cc,backgroundColor:cc+"22",fill:true,borderWidth:2,pointRadius:0,tension:.4}]},
+  options:opt({scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false},tooltip:{enabled:false}},animation:false})}));
+ matrix();const b=S.bytype,tys=Object.keys(b).filter(x=>x!=="depts");
+ mk("c1",{type:"bar",data:{labels:b.depts,datasets:tys.map(x=>({label:x,data:b[x],backgroundColor:TY[x]||"#999",borderRadius:4}))},options:opt({indexAxis:"y",plugins:{legend:{display:true,position:"bottom",labels:{boxWidth:10}}}})});
+ const y=S.ytype,tyy=Object.keys(y).filter(x=>x!=="years");
+ mk("c2",{type:"bar",data:{labels:y.years,datasets:tyy.map(x=>({label:x,data:y[x],backgroundColor:TY[x]||"#999",borderRadius:4}))},options:opt({plugins:{legend:{display:true,position:"bottom",labels:{boxWidth:10}}}})});
+ const tot=y.years.map((_,i)=>tyy.reduce((s,x)=>s+y[x][i],0)),f0=tot[0],f1=tot[tot.length-1];
+ $("#trend").innerHTML=y.years.length>1?`<b>Tendance :</b> les ventes passent de ${fmt(f0)} en ${y.years[0]} à ${fmt(f1)} en ${y.years[y.years.length-1]}, soit <span class="${f1>=f0?"up":"dw"}">${f1>=f0?"+":""}${fmt((f1/f0-1)*100,1)} %</span>.`:"Une seule année : ajoute d’autres années pour voir la tendance.";
+ const pc=S.pieces,keys=Object.keys(pc),tp=keys.reduce((s,x)=>s+pc[x],0)||1,cols=["#5b5bd6","#f5a524","#2fae9c","#a9a4ee","#d5d8ef"];
+ mk("c3",{type:"doughnut",data:{labels:keys.map(x=>x==="5"?"5 et +":x),datasets:[{data:keys.map(x=>pc[x]),backgroundColor:cols,borderWidth:0}]},options:opt({cutout:"68%"})});
+ $("#lgp").innerHTML=keys.map((x,i)=>`<div><span><i style="background:${cols[i]}"></i>${x==="5"?"5 pièces et +":x+" pièce"+(x>1?"s":"")}</span><b>${fmt(pc[x]/tp*100,1)} %</b></div>`).join("");$("#dct").textContent=fmt(S.kpi.n);
+ $("#tl").innerHTML=S.tiles.map(x=>`<div><small>${x.label}</small><b>${fmt(x.pct)} %</b><span>${fmt(x.n)} ventes</span></div>`).join("");
+ const ys=Object.keys(S.monthly);
+ mk("c4",{type:"line",data:{labels:MOIS,datasets:ys.map((yy,i)=>({label:yy,data:S.monthly[yy],borderColor:PAL[i%6],backgroundColor:PAL[i%6],borderWidth:2.5,pointRadius:3,tension:.3,spanGaps:true}))},options:opt({plugins:{legend:{display:true,position:"bottom"}}})});
+ mk("c5",{type:"bar",data:{labels:S.yearly.map(v=>v.annee),datasets:[{data:S.yearly.map(v=>v.prix_m2),backgroundColor:"#5b5bd6",borderRadius:6}]},options:opt()});
+ $("#yl").innerHTML=S.yearly.map(v=>`${v.annee} : ${fmt(v.prix_m2)} €/m²`+(v.evo==null?"":` <span class="${v.evo>=0?"up":"dw"}">(${v.evo>0?"+":""}${fmt(v.evo,1)} %)</span>`)).join(" · ");
+ mk("c6",{type:"bar",data:{labels:S.top.map(v=>v.nom),datasets:[{data:S.top.map(v=>v.prix_m2),backgroundColor:S.top.map((_,i)=>`rgba(91,91,214,${(1-i*.08).toFixed(2)})`),borderRadius:5}]},options:opt({indexAxis:"y"})});
+ layer.clearLayers();const ps=S.map.map(m=>m.prix_m2).sort((a,b)=>a-b),lo=ps[Math.floor(ps.length*.05)]||0,hi=ps[Math.floor(ps.length*.95)]||1,pts=[];
+ S.map.forEach(m=>{const c=sc((m.prix_m2-lo)/((hi-lo)||1)),mm=L.circleMarker([m.la,m.lo],{radius:Math.max(4,Math.min(22,Math.sqrt(m.n)*.9)),color:c,fillColor:c,fillOpacity:.75,weight:1});
+  mm.bindTooltip(`${esc(m.nom)}<br>${fmt(m.prix_m2)} €/m² · ${fmt(m.n)} ventes`);mm.on("click",()=>{F.commune=m.code;$("#fc").value=m.code;refresh()});mm.addTo(layer);pts.push([m.la,m.lo])});
+ if(pts.length&&(F.dept||F.commune))map.fitBounds(pts,{maxZoom:13,padding:[20,20]});
+ $("#tb").innerHTML="<tr><th>Commune</th><th>Type</th><th>m²</th><th>Pièces</th><th>Prix</th><th>€/m²</th><th>Date</th></tr>"+S.sales.slice(0,11).map(v=>`<tr><td>${esc(v.commune)}</td><td><span class="tag ${v.type==="Maison"?"m":""}">${v.type}</span></td><td>${fmt(v.surface)}</td><td>${v.pieces}</td><td>${fmt(v.prix)} €</td><td>${fmt(v.prix_m2)}</td><td>${v.date}</td></tr>`).join("")}
+init();
+</script></body></html>
