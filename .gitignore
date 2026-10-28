@@ -4,3 +4,5 @@ db/*.db
 models/*.joblib
 __pycache__/
 .venv/
+exports/powerbi/fact_ventes.csv
+exports/powerbi/predictions_test.csv
