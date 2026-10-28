@@ -30,9 +30,11 @@ data.gouv.fr (DVF géolocalisées)
         │  02_clean.py        (nettoyage, filtres, prix au m²)
         ▼
    data/processed/ventes_propres.csv
-        │  03_build_db.py     (modèle en étoile SQLite + exports CSV)
+        │  03_build_db.py     (modèle en étoile SQLite)
         ▼
-   db/dvf.db ───────────────► exports/powerbi/*.csv ──► Dashboard Power BI
+   db/dvf.db ──────────┬──► dashboard/app.py ──► Dashboard web interactif
+        │              │
+        │              └──► exports/powerbi/*.csv (optionnel : Power BI)
         │  04_sql_analysis.py (requêtes SQL d'analyse)
         │  05_model.py        (Machine Learning)
         ▼
