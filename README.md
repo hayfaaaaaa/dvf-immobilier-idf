@@ -9,6 +9,17 @@ Répondre à deux questions :
 1. **Comment évoluent les prix au m²** selon la commune, le département, le type de bien et le temps ?
 2. **Peut-on estimer le prix d'un bien** (appartement ou maison) à partir de sa surface, son nombre de pièces, son terrain et sa localisation ?
 
+## Aperçu du dashboard
+
+### Page 1 — Marché
+![Page Marché](docs/screenshots/01_marche.png)
+
+### Page 2 — Prix et évolution
+![Page Prix et évolution](docs/screenshots/02_prix_evolution.png)
+
+### Page 3 — Carte et ventes
+![Page Carte et ventes](docs/screenshots/03_carte_ventes.png)
+
 ## Architecture
 
 ```
